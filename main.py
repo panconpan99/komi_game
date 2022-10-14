@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 import itertools
+import sys
 import networkx as nx
 import collections
 from pygame import gfxdraw
