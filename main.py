@@ -150,8 +150,8 @@ class Game:
         pygame.init()
         screen = pygame.display.set_mode((BOARD_WIDTH, BOARD_WIDTH))
         self.screen = screen
-        #self.ZOINK = pygame.mixer.Sound("wav/zoink.wav")
-        #self.CLICK = pygame.mixer.Sound("wav/click.wav")
+        self.ZOINK = pygame.mixer.Sound("wav/zoink.wav")
+        self.CLICK = pygame.mixer.Sound("wav/click.wav")
         self.font = pygame.font.SysFont("arial", 30)
 
     def clear_screen(self):
