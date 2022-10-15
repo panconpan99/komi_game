@@ -152,8 +152,6 @@ class Game:
         pygame.init()
         screen = pygame.display.set_mode((BOARD_WIDTH, BOARD_WIDTH))
         self.screen = screen
-        #self.ZOINK = pygame.mixer.Sound("wav/zoink.wav")
-        #self.CLICK = pygame.mixer.Sound("wav/click.wav")
         self.font = pygame.font.SysFont("arial", 30)
 
     def clear_screen(self):
@@ -181,7 +179,6 @@ class Game:
         x, y = pygame.mouse.get_pos()
         col, row = xy_to_colrow(x, y, self.size)
         if not is_valid_move(col, row, self.board):
-            #self.ZOINK.play()
             return
 
         # update board array
@@ -208,7 +205,6 @@ class Game:
                 if (col, row) in group:
                     break
             if has_no_liberties(self.board, group):
-                #self.ZOINK.play()
                 self.board[col, row] = 0
                 return
         if self.prisoners[self_color]>=3:
@@ -218,7 +214,6 @@ class Game:
             self.black_turn = not self.black_turn
             self.draw()
         # change turns and draw screen
-        #self.CLICK.play()
 
     def win(self,color):
         self.clear_screen()
