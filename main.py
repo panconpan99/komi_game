@@ -16,6 +16,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 TURN_POS = (BOARD_BORDER, 20)
 SCORE_POS = (BOARD_BORDER, BOARD_WIDTH - BOARD_BORDER + 30)
+WIN_POS=(500,500)
 DOT_RADIUS = 4
 
 def make_grid(size):
@@ -145,13 +146,14 @@ class Game:
         self.black_turn = True
         self.prisoners = collections.defaultdict(int)
         self.start_points, self.end_points = make_grid(self.size)
+        self.winner=False
 
     def init_pygame(self):
         pygame.init()
         screen = pygame.display.set_mode((BOARD_WIDTH, BOARD_WIDTH))
         self.screen = screen
-        self.ZOINK = pygame.mixer.Sound("wav/zoink.wav")
-        self.CLICK = pygame.mixer.Sound("wav/click.wav")
+        #self.ZOINK = pygame.mixer.Sound("wav/zoink.wav")
+        #self.CLICK = pygame.mixer.Sound("wav/click.wav")
         self.font = pygame.font.SysFont("arial", 30)
 
     def clear_screen(self):
@@ -179,7 +181,7 @@ class Game:
         x, y = pygame.mouse.get_pos()
         col, row = xy_to_colrow(x, y, self.size)
         if not is_valid_move(col, row, self.board):
-            self.ZOINK.play()
+            #self.ZOINK.play()
             return
 
         # update board array
@@ -206,15 +208,34 @@ class Game:
                 if (col, row) in group:
                     break
             if has_no_liberties(self.board, group):
-                self.ZOINK.play()
+                #self.ZOINK.play()
                 self.board[col, row] = 0
                 return
-
+        if self.prisoners[self_color]>=3:
+            self.winner=True
+            self.win(self_color)
+        else:
+            self.black_turn = not self.black_turn
+            self.draw()
         # change turns and draw screen
-        self.CLICK.play()
-        self.black_turn = not self.black_turn
-        self.draw()
+        #self.CLICK.play()
 
+    def win(self,color):
+        self.clear_screen()
+        if color=="black":
+            msg=(
+                f"Black wins!!! press X to close"
+            )
+            txt = self.font.render(msg, True, BLACK)
+            self.screen.blit(txt, SCORE_POS)
+        elif color=="white":
+            msg=(
+                f"White wins!!! press X to close"
+            )
+            txt = self.font.render(msg, True, BLACK)
+            self.screen.blit(txt, SCORE_POS)
+        pygame.display.flip()
+    
     def draw(self):
         # draw stones - filled circle and antialiased ring
         self.clear_screen()
@@ -226,7 +247,6 @@ class Game:
             x, y = colrow_to_xy(col, row, self.size)
             gfxdraw.aacircle(self.screen, x, y, STONE_RADIUS, WHITE)
             gfxdraw.filled_circle(self.screen, x, y, STONE_RADIUS, WHITE)
-
         # text for score and turn info
         score_msg = (
             f"Black's Prisoners: {self.prisoners['black']}"
@@ -240,7 +260,6 @@ class Game:
         )
         txt = self.font.render(turn_msg, True, BLACK)
         self.screen.blit(txt, TURN_POS)
-
         pygame.display.flip()
 
     def update(self):
@@ -248,12 +267,16 @@ class Game:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
-                self.handle_click()
+                if not self.winner :
+                    self.handle_click()
             if event.type == pygame.QUIT:
                 sys.exit()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_p:
                     self.pass_move()
+                if self.winner:
+                    if event.key==pygame.K_x:
+                        sys.exit()
 
 
 if __name__ == "__main__":
