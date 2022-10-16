@@ -145,6 +145,8 @@ class Game:
         self.size = size
         self.black_turn = True
         self.prisoners = collections.defaultdict(int)
+        self.turn_black=0
+        self.turn_white=0
         self.start_points, self.end_points = make_grid(self.size)
         self.winner=False
 
@@ -187,7 +189,10 @@ class Game:
         # get stone groups for black and white
         self_color = "black" if self.black_turn else "white"
         other_color = "white" if self.black_turn else "black"
-
+        if self.black_turn:
+            self.turn_black+=1
+        else:
+            self.turn_white+=1
         # handle captures
         capture_happened = False
         for group in list(get_stone_groups(self.board, other_color)):
@@ -207,6 +212,7 @@ class Game:
             if has_no_liberties(self.board, group):
                 self.board[col, row] = 0
                 return
+
         if self.prisoners[self_color]>=3:
             self.winner=True
             self.win(self_color)
@@ -216,16 +222,16 @@ class Game:
         # change turns and draw screen
 
     def win(self,color):
-        self.clear_screen()
+        self.draw()
         if color=="black":
             msg=(
-                f"Black wins!!! press X to close"
+                f"Black wins!!! press X to close, done in {self.turn_black} moves" 
             )
             txt = self.font.render(msg, True, BLACK)
             self.screen.blit(txt, SCORE_POS)
         elif color=="white":
             msg=(
-                f"White wins!!! press X to close"
+                f"White wins!!! press X to close, done in {self.turn_white} moves"
             )
             txt = self.font.render(msg, True, BLACK)
             self.screen.blit(txt, SCORE_POS)
@@ -243,18 +249,19 @@ class Game:
             gfxdraw.aacircle(self.screen, x, y, STONE_RADIUS, WHITE)
             gfxdraw.filled_circle(self.screen, x, y, STONE_RADIUS, WHITE)
         # text for score and turn info
-        score_msg = (
-            f"Black's Prisoners: {self.prisoners['black']}"
-            + f"     White's Prisoners: {self.prisoners['white']}"
-        )
-        txt = self.font.render(score_msg, True, BLACK)
-        self.screen.blit(txt, SCORE_POS)
-        turn_msg = (
-            f"{'Black' if self.black_turn else 'White'} to move. "
-            + "Click to place stone, press P to pass."
-        )
-        txt = self.font.render(turn_msg, True, BLACK)
-        self.screen.blit(txt, TURN_POS)
+        if not self.winner:
+            score_msg = (
+                f"Black's Prisoners: {self.prisoners['black']}"
+                + f"     White's Prisoners: {self.prisoners['white']}"
+            )
+            txt = self.font.render(score_msg, True, BLACK)
+            self.screen.blit(txt, SCORE_POS)
+            turn_msg = (
+                f"{'Black' if self.black_turn else 'White'} to move. "
+                + "Click to place stone, press P to pass."
+            )
+            txt = self.font.render(turn_msg, True, BLACK)
+            self.screen.blit(txt, TURN_POS)
         pygame.display.flip()
 
     def update(self):
