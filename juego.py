@@ -19,13 +19,14 @@ WIN_POS=(500,500)
 DOT_RADIUS = 4
 
 class juego:
+
     def __init__(self,size,jugador1,jugador2):
         self.board = np.zeros((size, size))
         self.size = size
         self.jugador_1=jugador1
         self.jugador_2=jugador2
         self.turno=choice([True,False])
-        self.ganador=False
+        self.ganador=False 
         self.start_points, self.end_points = tabla.make_grid(self.size)
     
     def init_pygame(self):
@@ -172,5 +173,9 @@ class juego:
                 if self.ganador:
                     if event.key==pygame.K_x:
                         sys.exit()
+    """def calcular_heuristica(self, e, t):
+        if t:
+            return 
 
-
+    def inicia_busqueda(self):
+"""

@@ -17,5 +17,11 @@ class estado:
     def get_nivel(self):
         return self.nivel
 
+    def get_heuristica(self):
+        return self.distancia
+    
+    def set_heuristica(self, h):
+        self.heuristica = h
+
     def __eq__(self, e):
         return self.valor == e
