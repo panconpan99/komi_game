@@ -49,11 +49,12 @@ class juego:
             gfxdraw.filled_circle(self.screen, x, y, DOT_RADIUS, BLACK)
     
     def turns(self):
+
         if self.turno:
             if not self.jugador_1.bot:
-                col,row = self.jugador_1.put_stone_human(self.size,self.board)
+                col,row = self.jugador_1.put_stone_human(self.size)
             else:
-                col,row =self.jugador_1.put_stone_bot(self.size,self.board)
+                col,row =self.jugador_1.put_stone_bot(self.size)
 
             if not tabla.is_valid_move(col, row, self.board):
                 return
@@ -61,17 +62,18 @@ class juego:
             self.jugador_1.turnos+=1
         else:
             if not self.jugador_2.bot:
-                col,row = self.jugador_2.put_stone_human(self.size,self.board)
+                col,row = self.jugador_2.put_stone_human(self.size)
             else:
-                col,row =self.jugador_2.put_stone_bot(self.size,self.board)
+                col,row =self.jugador_2.put_stone_bot(self.size)
 
             if not tabla.is_valid_move(col, row, self.board):
                 return
             self.board[col, row] = 2
             self.jugador_2.turnos+=1
-        
+            
         self_color = "black" if self.turno else "white"
         other_color = "white" if self.turno else "black"
+
         # handle captures
         capture_happened = False
         for group in list(tabla.get_stone_groups(self.board, other_color)):
