@@ -54,7 +54,7 @@ class juego:
             if not self.jugador_1.bot:
                 col,row = self.jugador_1.put_stone_human(self.size)
             else:
-                col,row =self.jugador_1.put_stone_bot(self.size)
+                col,row =self.jugador_1.put_stone_bot(self.board)
 
             if not tabla.is_valid_move(col, row, self.board):
                 return
@@ -64,7 +64,7 @@ class juego:
             if not self.jugador_2.bot:
                 col,row = self.jugador_2.put_stone_human(self.size)
             else:
-                col,row =self.jugador_2.put_stone_bot(self.size)
+                col,row =self.jugador_2.put_stone_bot(self.board)
 
             if not tabla.is_valid_move(col, row, self.board):
                 return
@@ -76,6 +76,7 @@ class juego:
 
         # handle captures
         capture_happened = False
+        print(f""+ str(other_color) + " : "+ str(list(tabla.get_stone_groups(self.board,other_color)))) # aca se ve los grupos del oponente
         for group in list(tabla.get_stone_groups(self.board, other_color)):
             if tabla.has_no_liberties(self.board, group):
                 capture_happened = True

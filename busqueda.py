@@ -1,7 +1,7 @@
 import estado
 from collections import deque
 import sys, os, math
-
+import tabla
 class busqueda:
     #algoritmo minimax
     def __init__(self, EI, s_max, s_min):
@@ -11,3 +11,4 @@ class busqueda:
         self.s_min = s_min
         self.estados_descubiertos = 0
     
+

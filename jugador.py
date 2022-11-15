@@ -15,9 +15,18 @@ class jugador:
         col, row = tabla.xy_to_colrow(x, y,size)
         return col,row
     
-    def put_stone_bot(self,size):
+    def put_stone_bot(self,board):
         #experimento no sera final
-        x = r.randrange(1000)
-        y = r.randrange(1000)
-        col, row = tabla.xy_to_colrow(x, y,size)
-        return col,row
+        #x = r.randrange(1000)
+        #y = r.randrange(1000)
+
+        #col, row = tabla.xy_to_colrow(x, y,size)
+        if self.color=="Black":
+            s_max = "Black"
+            s_min = "White"
+        else:
+            s_max = "White"
+            s_min = "Black"
+        
+
+        #return col,row
