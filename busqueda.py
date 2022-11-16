@@ -11,4 +11,12 @@ class busqueda:
         self.s_min = s_min
         self.estados_descubiertos = 0
     
-
+    def calcular_heuristica(self,e):
+        m=e.get_estado()
+        
+        #aca calculara los espacios alrededor del grupo
+        return
+    
+    def inicia_busqueda():
+        #algo hara aca tranquilo ekisdede
+        return

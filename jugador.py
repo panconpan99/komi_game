@@ -2,7 +2,7 @@ import pygame
 import tabla
 import collections
 import random as r
-
+import busqueda
 class jugador:
     def __init__(self,color,tipo):
         self.color=color
@@ -27,6 +27,7 @@ class jugador:
         else:
             s_max = "White"
             s_min = "Black"
+        bot = busqueda(board,s_max,s_min)
+        col, row = bot.inicia_busqueda()
         
-
-        #return col,row
+        return col,row
