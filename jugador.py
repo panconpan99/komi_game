@@ -2,7 +2,7 @@ import pygame
 import tabla
 import collections
 import random as r
-import busqueda
+from busqueda import *
 class jugador:
     def __init__(self,color,tipo):
         self.color=color
@@ -28,6 +28,9 @@ class jugador:
             s_max = "White"
             s_min = "Black"
         bot = busqueda(board,s_max,s_min)
-        col, row = bot.inicia_busqueda()
-        
+        new_board = bot.inicia_busqueda() #mejor solucion
+        for i in range(board.shape[0]):
+            for j in range(board.shape[0]):
+                if new_board[i][j]!= board[i][j]:
+                    col, row = i,j
         return col,row

@@ -73,12 +73,13 @@ class juego:
             
         self_color = "black" if self.turno else "white"
         other_color = "white" if self.turno else "black"
-        bot = busqueda(self_color,other_color)
         # handle captures
         capture_happened = False
+        #despues se eliminia
         print(f""+ str(other_color) + " : "+ str(list(tabla.get_stone_groups(self.board,other_color)))) # aca se ve los grupos del oponente
-        print(list(bot.heuristica_test(self_color,self.board)))
-        print(list(bot.heuristica_test(other_color,self.board)))
+        #print(list(bot.calcular_rodeado(self_color,self.board)))
+        #print(list(bot.calcular_rodeado(other_color,self.board)))
+        #hasta aca
         for group in list(tabla.get_stone_groups(self.board, other_color)):
             if tabla.has_no_liberties(self.board, group):
                 print(tabla.has_no_liberties(self.board, group))
@@ -100,11 +101,23 @@ class juego:
             if tabla.has_no_liberties(self.board, group):
                 self.board[col, row] = 0
                 return
-        if self.jugador_1.prisioneros[self_color]>=3 or self.jugador_2.prisioneros[self_color]>=3:
-            self.ganador=True
+        #if self.jugador_1.prisioneros[self_color]>=3 or self.jugador_2.prisioneros[self_color]>=3:
+         #   self.ganador=True
+          #  self.win(self_color)
+        #else:
+         #   self.pass_move()
+
+        self.ganador=self.victory(self.jugador_1.prisioneros[self_color],self.jugador_2.prisioneros[self_color]) 
+        if self.ganador:
             self.win(self_color)
         else:
             self.pass_move()
+    
+    def victory(self,jugador_1,jugador_2):
+        if jugador_1>=3 or jugador_2>=3:
+            return True
+        else:
+            return False
 
     def win(self,color):
         self.draw()
