@@ -1,5 +1,5 @@
 import tabla
-from jugador import jugador
+from busqueda import busqueda
 from random import choice
 import numpy as np
 import pygame
@@ -73,12 +73,15 @@ class juego:
             
         self_color = "black" if self.turno else "white"
         other_color = "white" if self.turno else "black"
-
+        bot = busqueda(self_color,other_color)
         # handle captures
         capture_happened = False
         print(f""+ str(other_color) + " : "+ str(list(tabla.get_stone_groups(self.board,other_color)))) # aca se ve los grupos del oponente
+        print(list(bot.heuristica_test(self_color,self.board)))
+        print(list(bot.heuristica_test(other_color,self.board)))
         for group in list(tabla.get_stone_groups(self.board, other_color)):
             if tabla.has_no_liberties(self.board, group):
+                print(tabla.has_no_liberties(self.board, group))
                 capture_happened = True
                 for i, j in group:
                     self.board[i, j] = 0
