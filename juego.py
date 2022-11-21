@@ -1,5 +1,4 @@
 import tabla
-from busqueda import busqueda
 from random import choice
 import numpy as np
 import pygame
@@ -82,7 +81,6 @@ class juego:
         #hasta aca
         for group in list(tabla.get_stone_groups(self.board, other_color)):
             if tabla.has_no_liberties(self.board, group):
-                print(tabla.has_no_liberties(self.board, group))
                 capture_happened = True
                 for i, j in group:
                     self.board[i, j] = 0
