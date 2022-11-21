@@ -38,6 +38,7 @@ class jugador:
             for i in range(board.shape[0]):
                 for j in range(board.shape[0]):
                     if new_board[i,j]!= board[i,j]:
+                        print("entre")
                         col, row = i, j
 
         return col,row

@@ -81,12 +81,11 @@ class busqueda:
         return heu
 
     def se_mueve_a(self, e, posicion, simbolo):
-        new_simbolo=simbolo
         nueva_matriz=np.zeros((5,5))
         x,y = posicion
         #nueva_matriz = [filas[:] for filas in e.get_estado()] copia de matriz, valor por valor
         nueva_matriz = e.get_estado()
-        nueva_matriz[x,y] = new_simbolo
+        nueva_matriz[x,y] = simbolo
         return estado(nueva_matriz, e, " fila: " + str(posicion[0]) + ", columna: " + str(posicion[1]), e.get_nivel() + 1)
 
     def algoritmo_minimax(self, e, p, t):
