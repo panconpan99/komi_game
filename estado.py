@@ -1,9 +1,10 @@
 class estado:
-    def __init__(self, EA, EP, A,h):
+    def __init__(self, EA, EP, A,n):
         self.valor = EA
         self.padre = EP
         self.accion = A
-        self.heuristica=h
+        self.nivel= n
+        self.heuristica=None
 
     def get_estado(self):
         return self.valor
@@ -19,6 +20,9 @@ class estado:
     
     def get_heu(self):
         return self.heuristica
+    
+    def set_heu(self,h):
+        self.heuristica = h
 
     def __eq__(self, e):
         return self.valor == e
