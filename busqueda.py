@@ -64,10 +64,11 @@ class busqueda:
             return 100
         
     def juego_terminado(self,e):
+        #no mas espacios vacios y cantidad de capturados (posiblemente)
         return len(self.ver_espacios_vacios(e))==0
 
     def calcular_heuristica(self,e,c):
-        #aca calculara los espacios alrededor del grupo
+        #se espera calcular el tamaño del grupo a rodear + cantidad de fichas rodeadas - cantidad de fichas enemigas posiblemente perjudiciales + forzar capturra
         m=e.get_estado()
         if c==1:
             return self.calcular_rodeado(m,self.s_max)-self.calcular_rodeado(m,self.s_min)
