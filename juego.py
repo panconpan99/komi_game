@@ -7,8 +7,11 @@ import sys
 from pygame import gfxdraw
 import busqueda
 
-BOARD_BROWN = (199, 105, 42)
-BOARD_WIDTH = 1000
+# Game constants
+#BOARD_BROWN = (199, 105, 42)
+BOARD_BROWN = (150, 90, 30)
+#BOARD_WIDTH = 1000
+BOARD_WIDTH = 800
 BOARD_BORDER = 75
 STONE_RADIUS = 22
 WHITE = (255, 255, 255)
@@ -19,6 +22,7 @@ WIN_POS=(500,500)
 DOT_RADIUS = 4
 
 class juego:
+    
     def __init__(self,size,jugador1,jugador2):
         self.board = np.zeros((size, size))
         self.size = size
@@ -27,7 +31,11 @@ class juego:
         self.turno=choice([True,False])
         self.ganador=False
         self.start_points, self.end_points = tabla.make_grid(self.size)
-    
+        self.max_moves = (size*size)-1
+        self.dead_pieces = []
+        self.komi = size/2.0
+
+
     def init_pygame(self):
         pygame.init()
         screen = pygame.display.set_mode((BOARD_WIDTH, BOARD_WIDTH))
@@ -48,8 +56,22 @@ class juego:
             gfxdraw.aacircle(self.screen, x, y, DOT_RADIUS, BLACK)
             gfxdraw.filled_circle(self.screen, x, y, DOT_RADIUS, BLACK)
     
-    def turns(self):
+    #def asignacion(self, color):
+    #   for i in range(self.size)
+     
+    #def all_moves(color,board):
+    #    list = []
+    #    for n in range(1,26):
+    #        if board[n][5]
 
+    def comparacion(self,board1,board2):
+        for i in range(self.size):
+            for j in range(self.size):
+                if not board1[i][j] == board2[i][j]:
+                    return False
+        return True
+
+    def turns(self):
         if self.turno:
             if not self.jugador_1.bot:
                 col,row = self.jugador_1.put_stone_human(self.size)
@@ -110,12 +132,78 @@ class juego:
             self.win(self_color)
         else:
             self.pass_move()
-    
+
     def victory(self,jugador_1,jugador_2):
         if jugador_1>=3 or jugador_2>=3:
             return True
         else:
             return False
+
+
+    #piece_type son los jugadores, valor 1 y 2
+    #state es la misma clase juego
+    def max(self,alpha, beta, state, depth, piece_type):
+        if state.n_moves == state.max_moves or depth == 0:
+            value = self.evaluate(state, depth, piece_type, "TERMINAL")
+            return value, "TERMINAL", (-1, -1)
+        next_loc = (-1, -1)
+        action, value, next_value = "MOVE", -inf, -1
+        available_loc_list, _ = state.getAvailableLoc()
+        for loc in available_loc_list:
+            board, valid = state.validMove(loc[0], loc[1], "MOVE")
+            if not valid:
+                continue
+            next_state = self.advanceState(state, board)
+            next_value, _, _ = self._min(alpha, beta, next_state, depth-1, piece_type)
+            if next_value > value:
+                value, next_loc, action = next_value, loc, "MOVE"
+            if value > beta:
+                return value, action, next_loc
+            if value > alpha:
+                alpha = next_value
+        next_state = self.advanceState(state, state.board)
+        if state.sameBoard(state.previous_board, state.board) and state.sameBoard(next_state.previous_board, next_state.board):
+            next_value = self.evaluate(next_state, depth, piece_type, "NOTTERMINAL")
+        else:
+            next_value, _, _ = self._min(alpha, beta, next_state, depth-1, piece_type)
+        if next_value > value:
+            value, action = next_value, "PASS"
+        if next_value > beta:
+            return value, action, next_loc
+        if value > alpha:
+            alpha = next_value
+        return value, action, next_loc 
+
+    def _min(self, alpha, beta, state, depth, piece_type): 
+        if state.n_moves == state.max_moves or depth == 0:
+            value = self.evaluate(state, depth, piece_type, "TERMINAL")
+            return value, "TERMINAL", (-1, -1)
+        next_loc = (-1, -1)
+        action, value, next_value = "MOVE", inf, -1
+        available_loc_list, _ = state.getAvailableLoc()
+        for loc in available_loc_list:
+            board, valid = state.validMove(loc[0], loc[1], "MOVE")
+            if not valid:
+                continue
+            next_state = self.advanceState(state, board)
+            next_value, _, _ = self._max(alpha, beta, next_state, depth-1, piece_type)
+            if next_value < value:
+                value, next_loc, action = next_value, loc, "MOVE"
+            if value <= alpha:
+                return value, action, next_loc
+            beta = min(beta, value)
+        next_state = self.advanceState(state, state.board)
+        if state.sameBoard(state.previous_board, state.board) and state.sameBoard(next_state.previous_board, next_state.board):
+            next_value = self.evaluate(next_state, depth, piece_type, "NOTTERMINAL")
+        else:
+            next_value, _, _ = self._max(alpha, beta, next_state, depth-1, piece_type)
+        if next_value < value:
+            value, action = next_value, "PASS"
+        if next_value < alpha:
+            return value, action, next_loc
+        beta = min(beta, value)
+        return value, action, 
+    
 
     def win(self,color):
         self.draw()

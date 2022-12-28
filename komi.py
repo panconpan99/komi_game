@@ -2,7 +2,7 @@ from juego import juego
 from jugador import jugador
 import pygame
 import numpy as np
-
+#5x5 = 25
 if __name__ == "__main__":
     print("-"*23)
     print("bienvenidos al juego del Komi")
