@@ -12,27 +12,52 @@ class busqueda:
         self.s_min = s_min
         self.estados_descubiertos = 0
     
+    def calcular_rodeado(self,board,c_a):
+        #calcula cuanto a rodeado al enemigo
+        heu=0
+        if c_a == "black":
+            c_e="white"
+        else:
+            c_e="black"
+        if len(list(tabla.get_stone_groups(board,c_e)))==0:
+            return 0
+        else:
+            for groups in list(tabla.get_stone_groups(board,c_e)):
+                up, down = self.contar_rodeado(c_a,board,groups)
+                heu_prov=(up/down)*100
+                heu+=heu_prov
+            return heu
 
-    def contar_rodeado(self,m,c,group):
+    def contar_rodeado(self,c,m,group):
         #e es estado
         #c color
-        if c == 1:
-            c_l=2
-        else:
+        cant_up = 0
+        cant_down=0
+        if c=="black":
             c_l=1
-        cant = 0
-
+        else:
+            c_l=2   
         for x,y in group:
+            #up
             if m[x-1,y] in [c_l,""]:
-                cant+=1
+                cant_up+=1
             if m[x,y-1] in [c_l,""]:
-                cant+=1 
+                cant_up+=1 
             if y<m.shape[0] - 1 and m[x,y+1] in [c_l,""]:
-                cant+=1
+                cant_up+=1
             if x<m.shape[0] - 1 and m[x+1,y] in [c_l,""]:
-                cant+=1
-        return cant
-
+                cant_up+=1
+            #down
+            if x+1<m.shape[0]:
+                cant_down+=1
+            if x-1>=0:
+                cant_down+=1 
+            if y-1>=0:
+                cant_down+=1
+            if y+1<m.shape[1]:
+                cant_down+=1
+        return cant_up,cant_down
+    
     def ver_espacios_vacios(self,e):
         m=e.get_estado()
         vacios=[]
@@ -48,45 +73,53 @@ class busqueda:
         for group in list(tabla.get_stone_groups(m,c)):
             for x,y in group:
                 if m[x-1,y] == 0:
-                    posibles.append([x,y])
+                    posibles.append([x-1,y])
                 if m[x,y-1] == 0:
-                    posibles.append([x,y])
+                    posibles.append([x,y-1])
                 if y<m.shape[0] - 1 and m[x,y+1] == 0:
-                    posibles.append([x,y])
+                    posibles.append([x,y+1])
                 if x<m.shape[0] - 1 and m[x+1,y] == 0:
-                    posibles.append([x,y])
+                    posibles.append([x+1,y])
         return posibles
     
-
-    def forzar_captura(self,e,group):
+    
+    def forzar_captura(self,e,color):
         m=e.get_estado()
-        if tabla.has_not_liberties(m,group):
-            return 100
-        
+        for groups in list(tabla.get_stone_groups(m,color)):
+                if tabla.has_no_liberties(m,groups):
+                    return 100
+        return 0
+    
     def juego_terminado(self,e):
-        #no mas espacios vacios y cantidad de capturados (posiblemente)
-        return len(self.ver_espacios_vacios(e))==0
+        #no mas espacios vacios y si hubo captura
+        flag=False
+        m=e.get_estado()
+        print(m)
+        for c in ["black","white"]:
+            for groups in list(tabla.get_stone_groups(m,c)):
+                if tabla.has_no_liberties(m,groups):
+                    flag=True
+        return len(self.ver_espacios_vacios(e))==0 or flag==True
 
     def calcular_heuristica(self,e,c):
-        #se espera calcular el tamaño del grupo a rodear + cantidad de fichas rodeadas - cantidad de fichas enemigas posiblemente perjudiciales + forzar capturra
+        #se espera calcular cantidad de fichas rodeadas - cantidad de fichas enemigas posiblemente perjudiciales + forzar capturra
         m=e.get_estado()
-        if c==1:
-            return self.calcular_rodeado(m,self.s_max)-self.calcular_rodeado(m,self.s_min)
+        if c=="black":
+            return self.calcular_rodeado(m,self.s_max)-self.calcular_rodeado(m,self.s_min)+self.forzar_captura(e,self.s_max)
         else:
-            return self.calcular_rodeado(m,self.s_min)-self.calcular_rodeado(m,self.s_max)
-
-    def calcular_rodeado(self,board,c):
-        heu=0
-        for group in list(tabla.get_stone_groups(board,c)):
-            heu=self.contar_rodeado(c,board,group)
-        return heu
+            return self.calcular_rodeado(m,self.s_min)-self.calcular_rodeado(m,self.s_max)+self.forzar_captura(e,self.s_min)
+    
 
     def se_mueve_a(self, e, posicion, simbolo):
-        nueva_matriz=np.zeros((5,5))
+        #nueva_matriz=np.zeros((5,5))
         x,y = posicion
-        #nueva_matriz = [filas[:] for filas in e.get_estado()] copia de matriz, valor por valor
-        nueva_matriz = e.get_estado()
-        nueva_matriz[x,y] = simbolo
+        #nueva_matriz = [filas[:] for filas in e.get_estado()]
+        nueva_matriz = np.copy(e.get_estado())
+        if simbolo=="black":
+            number=1
+        else:
+            number=2
+        nueva_matriz[x,y] = number
         return estado(nueva_matriz, e, " fila: " + str(posicion[0]) + ", columna: " + str(posicion[1]), e.get_nivel() + 1)
 
     def algoritmo_minimax(self, e, p, t):
@@ -98,35 +131,38 @@ class busqueda:
         if t: #turno de max (jugador principal)
             hijos = []
             maximo = -math.inf
-            e_max = np.zeros((5,5))
-            posiciones_hijos = self.ver_espacios_posibles(e,self.s_max)
+            e_max = None
+            posiciones_hijos = self.ver_espacios_posibles(e,self.s_min)
             for posicion in posiciones_hijos:
                 hijos.append(self.se_mueve_a(e, posicion, self.s_max))
             for hijo in hijos:
                 eval = self.algoritmo_minimax(hijo, p - 1, False)
                 if eval >= maximo:
                     maximo = eval
-                    e_max = e.get_estado()
-            self.estado_solucion =e_max
+                    #e_max = [filas[:] for filas in hijo.get_estado()]
+                    e_max = np.copy(hijo.get_estado())
+            #self.estado_solucion = [filas[:] for filas in e_max]
+            self.estado_solucion=e_max
             return maximo
 
         else: #turno de min (adversario)
             hijos = []
             minimo = math.inf
-            e_min = np.zeros((5,5))
-            posiciones_hijos = self.ver_espacios_posibles(e,self.s_min)
+            e_min = None
+            posiciones_hijos = self.ver_espacios_posibles(e,self.s_max)
             for posicion in posiciones_hijos:
                 hijos.append(self.se_mueve_a(e, posicion, self.s_min))
             for hijo in hijos:
                 eval = self.algoritmo_minimax(hijo, p - 1, True)
                 if eval <= minimo:
                     minimo = eval
-                    e_min = e.get_estado()
-            self.estado_solucion =e_min
+                    #e_min = [filas[:] for filas in hijo.get_estado()]
+                    e_min = np.copy(hijo.get_estado())
+            #self.estado_solucion = [filas[:] for filas in e_min]
+            self.estado_solucion=e_min
             return minimo
 
     def inicia_busqueda(self):
-        #algo hara aca tranquilo ekisdede
         self.algoritmo_minimax(self.estado_inicial, 4, True)
         mejor = -math.inf
         lista_solucion=[]
