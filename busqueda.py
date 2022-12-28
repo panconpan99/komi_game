@@ -15,10 +15,7 @@ class busqueda:
     def calcular_rodeado(self,board,c_a):
         #calcula cuanto a rodeado al enemigo
         heu=0
-        if c_a == "black":
-            c_e="white"
-        else:
-            c_e="black"
+        c_e="white" if c_a=="black" else "black"
         if len(list(tabla.get_stone_groups(board,c_e)))==0:
             return 0
         else:
@@ -33,10 +30,7 @@ class busqueda:
         #c color
         cant_up = 0
         cant_down=0
-        if c=="black":
-            c_l=1
-        else:
-            c_l=2   
+        c_l=1 if c=="black" else 2
         for x,y in group:
             #up
             if m[x-1,y] in [c_l,""]:
@@ -82,7 +76,14 @@ class busqueda:
                     posibles.append([x+1,y])
         return posibles
     
-    
+    def reforsar(self,e,color):
+        #agrega un premio por el tamaño del grupo
+        m=e.get_estado()
+        prize=0
+        for groups in list(tabla.get_stone_groups(m,color)):
+            prize+=len(groups)*10
+        return prize
+
     def forzar_captura(self,e,color):
         m=e.get_estado()
         for groups in list(tabla.get_stone_groups(m,color)):
@@ -102,12 +103,12 @@ class busqueda:
         return len(self.ver_espacios_vacios(e))==0 or flag==True
 
     def calcular_heuristica(self,e,c):
-        #se espera calcular cantidad de fichas rodeadas - cantidad de fichas enemigas posiblemente perjudiciales + forzar capturra
+        #se espera calcular cantidad de fichas rodeadas - cantidad de fichas enemigas posiblemente perjudiciales + forzar capturra + tamaño de cada grupo
         m=e.get_estado()
         if c=="black":
-            return self.calcular_rodeado(m,self.s_max)-self.calcular_rodeado(m,self.s_min)+self.forzar_captura(e,self.s_max)
+            return self.calcular_rodeado(m,self.s_max)-self.calcular_rodeado(m,self.s_min)+self.forzar_captura(e,self.s_max)+self.reforsar(e,self.s_max)
         else:
-            return self.calcular_rodeado(m,self.s_min)-self.calcular_rodeado(m,self.s_max)+self.forzar_captura(e,self.s_min)
+            return self.calcular_rodeado(m,self.s_min)-self.calcular_rodeado(m,self.s_max)+self.forzar_captura(e,self.s_min)+self.reforsar(e,self.s_min)
     
 
     def se_mueve_a(self, e, posicion, simbolo):
@@ -115,10 +116,7 @@ class busqueda:
         x,y = posicion
         #nueva_matriz = [filas[:] for filas in e.get_estado()]
         nueva_matriz = np.copy(e.get_estado())
-        if simbolo=="black":
-            number=1
-        else:
-            number=2
+        number = 1 if simbolo=="black" else 2
         nueva_matriz[x,y] = number
         return estado(nueva_matriz, e, " fila: " + str(posicion[0]) + ", columna: " + str(posicion[1]), e.get_nivel() + 1)
 
