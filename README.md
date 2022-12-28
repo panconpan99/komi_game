@@ -7,4 +7,4 @@ python3 komi.py
 
 ```
 # Consideraciones
-la IA puede tomar su tiempo a la hora de escojer una posicion, por lo que puede esperar o jugar denuevo
+la IA puede tomar su tiempo a la hora de escoger una posicion, por lo que puede esperar o jugar denuevo
