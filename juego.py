@@ -5,6 +5,7 @@ import pygame
 import itertools
 import sys
 from pygame import gfxdraw
+import busqueda
 
 BOARD_BROWN = (199, 105, 42)
 BOARD_WIDTH = 1000
@@ -75,7 +76,7 @@ class juego:
         # handle captures
         capture_happened = False
         #despues se eliminia
-        print(f""+ str(other_color) + " : "+ str(list(tabla.get_stone_groups(self.board,other_color)))) # aca se ve los grupos del oponente
+        #print(f""+ str(other_color) + " : "+ str(list(tabla.get_stone_groups(self.board,other_color)))) # aca se ve los grupos del oponente
         #print(list(bot.calcular_rodeado(self_color,self.board)))
         #print(list(bot.calcular_rodeado(other_color,self.board)))
         #hasta aca
@@ -104,7 +105,6 @@ class juego:
           #  self.win(self_color)
         #else:
          #   self.pass_move()
-
         self.ganador=self.victory(self.jugador_1.prisioneros[self_color],self.jugador_2.prisioneros[self_color]) 
         if self.ganador:
             self.win(self_color)
@@ -132,6 +132,7 @@ class juego:
             txt = self.font.render(msg, True, BLACK)
             self.screen.blit(txt, SCORE_POS)
         pygame.display.flip()
+        print("winner")
     
     def pass_move(self):
         self.turno = not self.turno

@@ -27,18 +27,17 @@ class jugador:
             y = r.randrange(1000)
             col, row = tabla.xy_to_colrow(x, y, board.shape[0])
         else:
-            if self.color=="Black":
-                s_max = 1
-                s_min = 2
+            if self.color=="black":
+                s_max = "black"
+                s_min = "white"
             else:
-                s_max = 2
-                s_min = 1
+                s_max = "white"
+                s_min = "black"
             bot = busqueda(board,s_max,s_min)
             new_board = bot.inicia_busqueda() #mejor solucion
             for i in range(board.shape[0]):
                 for j in range(board.shape[0]):
                     if new_board[i,j]!= board[i,j]:
-                        print("entre")
                         col, row = i, j
 
         return col,row
