@@ -12,8 +12,12 @@ class jugador:
     
     def put_stone_human(self,size):
         x, y = pygame.mouse.get_pos()
+        #y = pygame.mouse.get_pos()
         col, row = tabla.xy_to_colrow(x, y, size)
-        return col,row
+        matriz = [col,row]
+        print(matriz)
+        #print(tabla.xy_to_colrow(tabla.xy_to_colrow(x, y, size)))
+        return col, row
     
     def put_stone_bot(self,board):
         #experimento no sera final
@@ -37,8 +41,8 @@ class jugador:
             new_board = bot.inicia_busqueda() #mejor solucion
             for i in range(board.shape[0]):
                 for j in range(board.shape[0]):
-                    if new_board[i,j]!= board[i,j]:
-                        print("entre")
-                        col, row = i, j
-
+                    if new_board[i,j] == board[i,j]: #antes era !=
+                        print("entre ")
+                        #col, row = i, j
+                        col,row = r.randrange(5),r.randrange(5)
         return col,row

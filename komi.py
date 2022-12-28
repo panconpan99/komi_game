@@ -2,7 +2,7 @@ from juego import juego
 from jugador import jugador
 import pygame
 import numpy as np
-
+#5x5 = 25
 if __name__ == "__main__":
     jugador1=jugador(color="black",tipo=False)
     jugador2=jugador(color="white",tipo=True)
