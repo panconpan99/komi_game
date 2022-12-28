@@ -1,3 +1,4 @@
+from math import inf
 import tabla
 from random import choice
 import numpy as np
@@ -17,7 +18,7 @@ STONE_RADIUS = 22
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 TURN_POS = (BOARD_BORDER, 20)
-SCORE_POS = (BOARD_BORDER, BOARD_WIDTH - BOARD_BORDER + 30)
+SCORE_POS = (BOARD_BORDER, BOARD_WIDTH - BOARD_BORDER + 20)
 WIN_POS=(500,500)
 DOT_RADIUS = 4
 
@@ -138,72 +139,6 @@ class juego:
             return True
         else:
             return False
-
-
-    #piece_type son los jugadores, valor 1 y 2
-    #state es la misma clase juego
-    def max(self,alpha, beta, state, depth, piece_type):
-        if state.n_moves == state.max_moves or depth == 0:
-            value = self.evaluate(state, depth, piece_type, "TERMINAL")
-            return value, "TERMINAL", (-1, -1)
-        next_loc = (-1, -1)
-        action, value, next_value = "MOVE", -inf, -1
-        available_loc_list, _ = state.getAvailableLoc()
-        for loc in available_loc_list:
-            board, valid = state.validMove(loc[0], loc[1], "MOVE")
-            if not valid:
-                continue
-            next_state = self.advanceState(state, board)
-            next_value, _, _ = self._min(alpha, beta, next_state, depth-1, piece_type)
-            if next_value > value:
-                value, next_loc, action = next_value, loc, "MOVE"
-            if value > beta:
-                return value, action, next_loc
-            if value > alpha:
-                alpha = next_value
-        next_state = self.advanceState(state, state.board)
-        if state.sameBoard(state.previous_board, state.board) and state.sameBoard(next_state.previous_board, next_state.board):
-            next_value = self.evaluate(next_state, depth, piece_type, "NOTTERMINAL")
-        else:
-            next_value, _, _ = self._min(alpha, beta, next_state, depth-1, piece_type)
-        if next_value > value:
-            value, action = next_value, "PASS"
-        if next_value > beta:
-            return value, action, next_loc
-        if value > alpha:
-            alpha = next_value
-        return value, action, next_loc 
-
-    def _min(self, alpha, beta, state, depth, piece_type): 
-        if state.n_moves == state.max_moves or depth == 0:
-            value = self.evaluate(state, depth, piece_type, "TERMINAL")
-            return value, "TERMINAL", (-1, -1)
-        next_loc = (-1, -1)
-        action, value, next_value = "MOVE", inf, -1
-        available_loc_list, _ = state.getAvailableLoc()
-        for loc in available_loc_list:
-            board, valid = state.validMove(loc[0], loc[1], "MOVE")
-            if not valid:
-                continue
-            next_state = self.advanceState(state, board)
-            next_value, _, _ = self._max(alpha, beta, next_state, depth-1, piece_type)
-            if next_value < value:
-                value, next_loc, action = next_value, loc, "MOVE"
-            if value <= alpha:
-                return value, action, next_loc
-            beta = min(beta, value)
-        next_state = self.advanceState(state, state.board)
-        if state.sameBoard(state.previous_board, state.board) and state.sameBoard(next_state.previous_board, next_state.board):
-            next_value = self.evaluate(next_state, depth, piece_type, "NOTTERMINAL")
-        else:
-            next_value, _, _ = self._max(alpha, beta, next_state, depth-1, piece_type)
-        if next_value < value:
-            value, action = next_value, "PASS"
-        if next_value < alpha:
-            return value, action, next_loc
-        beta = min(beta, value)
-        return value, action, 
-    
 
     def win(self,color):
         self.draw()
