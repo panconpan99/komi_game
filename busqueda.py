@@ -3,6 +3,7 @@ from collections import deque
 import sys, os, math
 import tabla
 import numpy as np
+import random as r
 class busqueda:
     #algoritmo minimax
     def __init__(self,EI, s_max, s_min):
@@ -74,6 +75,12 @@ class busqueda:
                     posibles.append([x,y+1])
                 if x<m.shape[0] - 1 and m[x+1,y] == 0:
                     posibles.append([x+1,y])
+        while len(posibles)==0:
+            #en caso de no encontrar espacios posibles se hace un randomico 
+            x = r.randrange(4)
+            y = r.randrange(4)
+            if m[x,y]==0:
+                 posibles.append([x,y])
         return posibles
     
     def reforsar(self,e,color):
@@ -112,9 +119,7 @@ class busqueda:
     
 
     def se_mueve_a(self, e, posicion, simbolo):
-        #nueva_matriz=np.zeros((5,5))
         x,y = posicion
-        #nueva_matriz = [filas[:] for filas in e.get_estado()]
         nueva_matriz = np.copy(e.get_estado())
         number = 1 if simbolo=="black" else 2
         nueva_matriz[x,y] = number
@@ -137,9 +142,7 @@ class busqueda:
                 eval = self.algoritmo_minimax(hijo, p - 1, False)
                 if eval >= maximo:
                     maximo = eval
-                    #e_max = [filas[:] for filas in hijo.get_estado()]
                     e_max = np.copy(hijo.get_estado())
-            #self.estado_solucion = [filas[:] for filas in e_max]
             self.estado_solucion=e_max
             return maximo
 
@@ -154,9 +157,7 @@ class busqueda:
                 eval = self.algoritmo_minimax(hijo, p - 1, True)
                 if eval <= minimo:
                     minimo = eval
-                    #e_min = [filas[:] for filas in hijo.get_estado()]
                     e_min = np.copy(hijo.get_estado())
-            #self.estado_solucion = [filas[:] for filas in e_min]
             self.estado_solucion=e_min
             return minimo
 

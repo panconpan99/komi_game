@@ -12,15 +12,10 @@ class jugador:
     
     def put_stone_human(self,size):
         x, y = pygame.mouse.get_pos()
-        #y = pygame.mouse.get_pos()
         col, row = tabla.xy_to_colrow(x, y, size)
-        matriz = [col,row]
-        print(matriz)
-        #print(tabla.xy_to_colrow(tabla.xy_to_colrow(x, y, size)))
         return col, row
     
     def put_stone_bot(self,board):
-        #experimento no sera final
         flag=False
         for i in range(board.shape[0]):
             for j in range(board.shape[0]):
@@ -31,12 +26,18 @@ class jugador:
             y = r.randrange(1000)
             col, row = tabla.xy_to_colrow(x, y, board.shape[0])
         else:
+            s_max="black" if self.color=="black" else "white"
+            s_min="white" if self.color=="black" else "black"
+
+            '''
             if self.color=="black":
                 s_max = "black"
                 s_min = "white"
             else:
                 s_max = "white"
                 s_min = "black"
+            '''
+            
             bot = busqueda(board,s_max,s_min)
             new_board = bot.inicia_busqueda() #mejor solucion
             for i in range(board.shape[0]):
