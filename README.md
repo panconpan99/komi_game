@@ -1,7 +1,7 @@
 # Komi_game
-proyecto semestral de inteligencia artificial de 02-2022, basado en el juego invenado llamado Komi, donde es una version simplificada del juego chino Go
+proyecto semestral de inteligencia artificial de 02-2022, basado en el juego inventado llamado Komi, donde es una version simplificada del juego chino Go
 
-# Como se ejectuta
+# Como se ejecuta
 ```
 python3 komi.py
 
