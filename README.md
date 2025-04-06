@@ -10,6 +10,9 @@ python3 komi.py
 la IA puede tomar su tiempo a la hora de escoger una posicion, por lo que puede esperar o jugar denuevo
 
 
+base del juego hecho por https://github.com/thomashikaru/gogame
+
 hecho por :
 Lucas Almonacid
+
 Diego Lorr
